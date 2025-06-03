@@ -3,8 +3,10 @@ import logging
 import websockets
 from options import Option
 from messages import Message
+from peer import Peer
 
 
+msg = Message()
 log = logging.getLogger(__name__)
 logging.basicConfig(
         level=logging.INFO,
@@ -13,13 +15,16 @@ logging.basicConfig(
         )
 
 
-peers = set()
+peers = { 0: set() }
 
 
 async def proc(socket) -> None:
     """Server func."""
 
-    msg = Message()
+    idx = len(peers[0]) + 2
+    peer = Peer(socket, idx)
+    peers[0].add(peer)
+    log.info(msg.connect(idx))
 
     try:
         async for sock in socket:
@@ -28,13 +33,13 @@ async def proc(socket) -> None:
             log.info(msg.send_msg("PONG"))
 
     except websockets.ConnectionClosed as err:
-        log.warning(msg.disconnect(err))
+        peers[0].remove(peer)
+        log.warning(msg.disconnect(idx, err))
 
 
 async def server_task(addr: str, port: int) -> None:
     """Main server task."""
 
-    msg = Message()
     log.info(msg.start_server(addr, port))
 
     async with websockets.serve(proc, addr, port):
