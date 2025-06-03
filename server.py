@@ -24,16 +24,18 @@ async def proc(socket) -> None:
     idx = len(peers[0]) + 2
     peer = Peer(socket, idx)
     peers[0].add(peer)
+    peers[idx] = peer
     log.info(msg.connect(idx))
 
     try:
         async for sock in socket:
             log.info(msg.receive_msg(sock))
-            await socket.send("PONG")
-            log.info(msg.send_msg("PONG"))
+            await peer.send()
 
     except websockets.ConnectionClosed as err:
         peers[0].remove(peer)
+        del peers[idx]
+
         log.warning(msg.disconnect(idx, err))
 
 
