@@ -10,7 +10,7 @@ async def listen() -> None:
     url = f"ws://{opt.address()}:{opt.port()}"
     
     async with websockets.connect(url) as ws:
-        await ws.send("<greeting message>")
+        await ws.send("PING")
         while True:
             msg = await ws.recv()
             print(f"Receive msg: {msg}")

@@ -24,7 +24,8 @@ async def proc(socket) -> None:
     try:
         async for sock in socket:
             log.info(msg.receive_msg(sock))
-            await socket.send(sock)
+            await socket.send("PONG")
+            log.info(msg.send_msg("PONG"))
 
     except websockets.ConnectionClosed as err:
         log.warning(msg.disconnect(err))
