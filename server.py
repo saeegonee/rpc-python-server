@@ -22,9 +22,9 @@ async def proc(socket) -> None:
     msg = Message()
 
     try:
-        async for msg in socket:
-            log.info(msg.receive_msg(msg))
-            await socket.send(msg)
+        async for sock in socket:
+            log.info(msg.receive_msg(sock))
+            await socket.send(sock)
 
     except websockets.ConnectionClosed as err:
         log.warning(msg.disconnect(err))
