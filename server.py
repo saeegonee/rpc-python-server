@@ -5,6 +5,14 @@ from options import Option
 from messages import Message
 
 
+log = logging.getLogger(__name__)
+logging.basicConfig(
+        level=logging.INFO,
+        datefmt="%Y-%m-%d %H:%M:%S",
+        format="[%(asctime)s.%(msecs)03d][%(levelname)s] %(message)s",
+        )
+
+
 peers = set()
 
 
@@ -15,18 +23,18 @@ async def proc(socket) -> None:
 
     try:
         async for msg in socket:
-            print(msg.receive_msg(msg))
+            log.info(msg.receive_msg(msg))
             await socket.send(msg)
 
     except websockets.ConnectionClosed as err:
-        print(msg.disconnect(err))
+        log.warning(msg.disconnect(err))
 
 
 async def server_task(addr: str, port: int) -> None:
     """Main server task."""
 
     msg = Message()
-    print(msg.start_server(addr, port))
+    log.info(msg.start_server(addr, port))
 
     async with websockets.serve(proc, addr, port):
         await asyncio.Future()
