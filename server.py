@@ -25,12 +25,6 @@ peers[1] = serv_peer
 async def echo(socket) -> None:
     """Server func."""
 
-    # idx = len(peers[0]) + 2
-    # peer = Peer(socket, idx)
-    # peers[0].add(peer)
-    # peers[idx] = peer
-    # log.info(msg.connect(idx))
-
     try:
         async for ws in socket:
             packet = Packet(ws)
@@ -47,8 +41,7 @@ async def echo(socket) -> None:
             log.info(msg.receive_msg(str(packet)))
 
     except websockets.ConnectionClosed as err:
-        # peers[0].remove(peer)
-        # del peers[idx]
+        # TODO. del websocket from peers
 
         log.warning(msg.disconnect(-1, err))
 
