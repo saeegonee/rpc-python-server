@@ -1,3 +1,4 @@
+from packet import Packet
 from permissions import Permission
 
 
@@ -18,5 +19,5 @@ class Peer(object):
     def permission(self) -> list:
         return self.__permission
 
-    async def send(self) -> None:
-        await self.__websocket.send("PONG")
+    async def send(self, packet: Packet) -> None:
+        await self.__websocket.send(str(packet))
