@@ -1,5 +1,6 @@
 import sys
-sys.path.append("D:/_Others/rpc-python-server")
+import constants
+sys.path.append(constants.PROJECT_PATH)
 
 from options import Option
 
