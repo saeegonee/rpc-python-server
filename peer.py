@@ -1,8 +1,14 @@
+from permissions import Permission
+
+
+permission = Permission()
+
+
 class Peer(object):
     def __init__(self, websocket, idx: int) -> None:
         self.__websocket = websocket
         self.__id: int = idx
-        self.__permission: list = ["msg"]
+        self.__permission: list = permission.common()
 
     @property
     def id(self) -> int:
