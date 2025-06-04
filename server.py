@@ -72,6 +72,7 @@ async def main() -> None:
 if __name__ == "__main__":
     
     args = sys.argv[1:]
-    log.info(args)
+    if args.__contains__("-v"):
+        logging.basicConfig(level=logging.INFO)
 
     asyncio.run(main())
