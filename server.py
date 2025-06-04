@@ -3,6 +3,7 @@ import logging
 import websockets
 from options import Option
 from messages import Message
+from packet import Packet
 from peer import Peer
 
 
@@ -28,9 +29,11 @@ async def proc(socket) -> None:
     log.info(msg.connect(idx))
 
     try:
-        async for sock in socket:
-            log.info(msg.receive_msg(sock))
-            await peer.send()
+        async for ws in socket:
+            packet = Packet(ws)
+            packet.extend()
+            
+            log.info(msg.receive_msg(str(packet)))
 
     except websockets.ConnectionClosed as err:
         peers[0].remove(peer)
