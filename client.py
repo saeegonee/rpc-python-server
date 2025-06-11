@@ -1,6 +1,6 @@
-from packet import Packet
 from websockets import ServerConnection
-from permissions import *
+from packet import Packet
+from stuff.permissions import *
 
 
 class Client(object):
