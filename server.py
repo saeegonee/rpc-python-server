@@ -3,7 +3,7 @@ import asyncio
 import logging
 import websockets
 from client import Client
-from modifier import Workshop
+from workshop import Workshop
 from options import Option
 from messages import Message
 from packet import Packet
