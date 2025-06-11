@@ -1,14 +1,12 @@
 import sys
 import asyncio
 import logging
+import websockets
 from client import Client
 from modifier import Workshop
-import websockets
 from options import Option
 from messages import Message
 from packet import Packet
-
-# from peer_server import PeerServer
 
 
 lmsg = Message()
@@ -24,6 +22,7 @@ class Server(object):
     def __init__(self) -> None:
         self.__client_counter: int = 2
         self.__clients: dict = {1: Workshop()}
+        # self.__rooms: dict = {}
 
     async def _listen_socket(self, wsocket: websockets.ServerConnection) -> None:
         idx = self.__client_counter + 1
@@ -62,6 +61,9 @@ class Server(object):
 
         task0 = asyncio.create_task(self._task(addr, port))
         await task0
+
+    def stop(self) -> None:
+        """Force stop the server."""
 
 
 if __name__ == "__main__":
