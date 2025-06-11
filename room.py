@@ -1,7 +1,6 @@
 import logging
 from client import Client
 from packet import Packet
-from stuff.exceptions import MethodException
 from stuff.messages import Message
 
 
@@ -41,11 +40,11 @@ class Room(object):
 
     async def message(self, pck: Packet) -> None:
         if pck.recepient == "0":
-            self._broadcast(pck)
+            await self._broadcast(pck)
             return
         target = pck.recepient
         self.__clients[target].send(pck)
 
-    def _broadcast(self, pck: Packet) -> None:
+    async def _broadcast(self, pck: Packet) -> None:
         for client in self.__clients.values():
             client.send(pck)
