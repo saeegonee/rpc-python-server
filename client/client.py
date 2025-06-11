@@ -10,7 +10,8 @@ async def listen() -> None:
             l_pack = inp.split(",")
 
             await ws.send(f'[{l_pack[0]},"{l_pack[1]}","{l_pack[2]}"]')
-            await ws.recv()
+            msg = await ws.recv()
+            print(f"Get msg: {msg}")
 
 
 asyncio.get_event_loop().run_until_complete(listen())

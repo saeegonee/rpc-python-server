@@ -46,11 +46,11 @@ class Room(object):
                 await self._broadcast(pck)
                 return
             
-            self.__clients[pck.recepient].send(pck)
+            await self.__clients[pck.recepient].send(pck)
 
         except Exception as err:
             log.info(lmsg.method_error(pck.action, err))
 
     async def _broadcast(self, pck: Packet) -> None:
         for client in self.__clients.values():
-            client.send(pck)
+            await client.send(pck)

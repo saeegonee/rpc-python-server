@@ -22,7 +22,7 @@ logging.basicConfig(
 
 class Server(object):
     def __init__(self) -> None:
-        self.__client_counter: int = 0
+        self.__client_counter: int = 1
         self.__rooms: dict[str, Room] = {}
 
     async def _check_room_clients(self) -> None:

@@ -20,12 +20,12 @@ class Client(object):
     def permission(self) -> list:
         return self.__permission
 
-    def send(self, pck: Packet) -> None:
+    async def send(self, pck: Packet) -> None:
         """ Send message to client."""
         msg = str(pck)
-        self.__socket.send(msg)
+        await self.__socket.send(msg)
 
-    def disconnect(self) -> None:
+    async def disconnect(self) -> None:
         """ Force disconnect from server. """
 
     async def verify_action(self, packet: Packet, client) -> None:
