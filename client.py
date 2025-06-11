@@ -9,11 +9,9 @@ async def listen() -> None:
     url = f"ws://{opt.address()}:{opt.port()}"
     
     async with websockets.connect(url) as ws:
-        await ws.send("PING")
         while True:
-            await ws.send("PING")
-            await ws.recv()
-            
+            await ws.send(f'[0,"auth","token"]')
+            # await ws.recv()
             await asyncio.sleep(0.4)
 
 
