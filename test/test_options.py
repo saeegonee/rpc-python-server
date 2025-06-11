@@ -2,17 +2,18 @@ import sys
 import constants
 sys.path.append(constants.PROJECT_PATH)
 
-from stuff.options import Option
 
+import stuff.options as opt
+
+
+def test_options_type() -> None:
+    assert isinstance(opt.ADDRESS, str)
+    assert isinstance(opt.PORT, int)
+    assert isinstance(opt.TOKEN, str)
+    assert isinstance(opt.ROOM_TIMEOUT, int)
 
 def test_options() -> None:
-    
-    opt = Option()
-
-    assert len(opt.address()) > 0
-    assert opt.port() > 0
-    assert len(opt.token()) > 0
-
-    assert isinstance(opt.address(), str)
-    assert isinstance(opt.port(), int)
-    assert isinstance(opt.token(), str)
+    assert len(opt.ADDRESS) > 0
+    assert opt.PORT > 0
+    assert len(opt.TOKEN) > 0
+    assert opt.ROOM_TIMEOUT > 20
