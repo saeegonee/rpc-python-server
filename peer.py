@@ -1,3 +1,4 @@
+from websockets import ServerConnection
 from packet import Packet
 from permissions import Permission
 
@@ -6,7 +7,7 @@ permission = Permission()
 
 
 class Peer(object):
-    def __init__(self, websocket, idx: int) -> None:
+    def __init__(self, websocket: ServerConnection, idx: int) -> None:
         self.__websocket = websocket
         self.__id: int = idx
         self.__permission: list = permission.common()
