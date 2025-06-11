@@ -37,16 +37,16 @@ class Room(object):
 
     async def process(self, pck: Packet) -> None:
         try:
-            if pck.recepient == 1:
-                trg = getattr(self.__handler, pck.action)
-                trg(pck.payload)
-                return
-            
-            elif pck.recepient == 0:
+            if pck.recepient == 0:
                 await self._broadcast(pck)
                 return
             
-            await self.__clients[pck.recepient].send(pck)
+            if pck.recepient > 1:
+                await self.__clients[pck.recepient].send(pck)
+                return
+            
+            trg = getattr(self.__handler, pck.action)
+            trg(pck.payload)
 
         except Exception as err:
             log.info(lmsg.method_error(pck.action, err))
