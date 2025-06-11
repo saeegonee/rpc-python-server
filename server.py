@@ -1,10 +1,11 @@
 import sys
 import asyncio
 import logging
+from uuid import uuid4
 import websockets
+from room import Room
 from packet import Packet
 from client import Client
-from workshop import Workshop
 from stuff.options import Option
 from stuff.messages import Message
 
@@ -21,31 +22,31 @@ logging.basicConfig(
 class Server(object):
     def __init__(self) -> None:
         self.__client_counter: int = 2
-        self.__clients: dict = {1: Workshop()}
-        # self.__rooms: dict = {}
+        self.__rooms: dict[str, Room] = {}
 
     async def _listen_socket(self, wsocket: websockets.ServerConnection) -> None:
+
+        # Room
+        uuid = str(uuid4())
+        room = Room(uuid)
+        self.__rooms[uuid] = room
+        
+        # client
         idx = self.__client_counter + 1
         client = Client(idx, wsocket)
-        self.__clients[idx] = client
+        self.__rooms[uuid].visit(client)
         self.__client_counter += 1
-        log.info(lmsg.connect(idx))
 
+        # Handler
         try:
             async for msg in wsocket:
                 packet = Packet(msg)
                 packet.extend()
 
-                # TODO. call action by name
-                # if hasattr(peers[packet.recepient], packet.action):
-
-                # TODO. send pity request to client
-                # else:
-
                 log.info(lmsg.receive_msg(str(packet)))
 
         except websockets.ConnectionClosed as err:
-            del self.__clients[idx]
+            room.leave(client)
             log.warning(lmsg.disconnect(idx, err))
 
     async def _task(self, addr: str, port: int) -> None:

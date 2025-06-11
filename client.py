@@ -9,6 +9,9 @@ class Client(object):
         self.__socket: ServerConnection = wsocket
         self.__permission: list = common_permissions()
 
+    def __str__(self) -> str:
+        return f"<{self.__id}>"
+
     @property
     def id(self) -> int:
         return self.__id
@@ -24,3 +27,7 @@ class Client(object):
 
     def disconnect(self) -> None:
         """ Force disconnect from server. """
+
+    async def verify_action(self, packet: Packet, client) -> None:
+        print(f"{self} verify: {packet} from {client}")
+
