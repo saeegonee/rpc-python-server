@@ -48,6 +48,7 @@ class Server(object):
         idx = self.__client_counter + 1
         client = Client(idx, wsocket)
         self.__client_counter += 1
+        await client.id_request()
         await self.__rooms[uuid].visit(client)
 
         # Handler

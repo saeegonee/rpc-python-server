@@ -21,13 +21,9 @@ class Client(object):
         return self.__permission
 
     async def send(self, pck: Packet) -> None:
-        """ Send message to client."""
         msg = str(pck)
         await self.__socket.send(msg)
 
-    async def disconnect(self) -> None:
-        """ Force disconnect from server. """
-
-    async def verify_action(self, packet: Packet, client) -> None:
-        print(f"{self} verify: {packet} from {client}")
-
+    async def id_request(self) -> None:
+        pck = Packet(f'[{self.__id},"id"]')
+        await self.send(pck)
