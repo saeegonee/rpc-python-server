@@ -1,6 +1,5 @@
-from asyncio.windows_events import _overlapped
-import websockets
 import asyncio
+import websockets
 from options import Option
 
 
@@ -12,8 +11,10 @@ async def listen() -> None:
     async with websockets.connect(url) as ws:
         await ws.send("PING")
         while True:
-            msg = await ws.recv()
-            print(f"Receive msg: {msg}")
+            await ws.send("PING")
+            await ws.recv()
+            
+            await asyncio.sleep(0.4)
 
 
 asyncio.get_event_loop().run_until_complete(listen())
