@@ -1,11 +1,13 @@
 import sys
-sys.path.append("D:/_Others/rpc-python-server")
+import constants
+sys.path.append(constants.PROJECT_PATH)
 
 from peer_server import PeerServer
 from options import Option
 
 
-pserv = PeerServer()
+broadcast = set()
+pserv = PeerServer(broadcast)
 opt = Option()
 
 
