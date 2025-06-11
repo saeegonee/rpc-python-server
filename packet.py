@@ -7,12 +7,9 @@ class Packet(object):
         self.recepient: int
         self.action: str
         self.payload: list
-
-    def extend(self) -> None:
-        src = json.loads(self.__msg)
-        self.recepient = src[0]
-        self.action = src[1]
-        self.payload = src[2:]
+        
+        if self.__msg != "":
+            self._extend()
 
     def __str__(self) -> str:
         raw_msg = [self.recepient, self.action, *self.payload]
@@ -20,3 +17,9 @@ class Packet(object):
 
     def __byte__(self) -> bytes:
         return str(self).encode("utf-8")
+
+    def _extend(self) -> None:
+        src = json.loads(self.__msg)
+        self.recepient = src[0]
+        self.action = src[1]
+        self.payload = src[2:]

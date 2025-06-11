@@ -3,6 +3,7 @@ import asyncio
 import logging
 from uuid import uuid4
 import websockets
+from room_handler import RoomHandlerCommon
 from room import Room
 from packet import Packet
 from client import Client
@@ -28,25 +29,24 @@ class Server(object):
 
         # Room
         uuid = str(uuid4())
-        room = Room(uuid)
+        room_handle = RoomHandlerCommon()
+        room = Room(uuid, room_handle)
         self.__rooms[uuid] = room
         
         # client
         idx = self.__client_counter + 1
         client = Client(idx, wsocket)
-        self.__rooms[uuid].visit(client)
         self.__client_counter += 1
+        await self.__rooms[uuid].visit(client)
 
         # Handler
         try:
             async for msg in wsocket:
                 packet = Packet(msg)
-                packet.extend()
-
-                log.info(lmsg.receive_msg(str(packet)))
+                await room.process(packet)                
 
         except websockets.ConnectionClosed as err:
-            room.leave(client)
+            await room.leave(client)
             log.warning(lmsg.disconnect(idx, err))
 
     async def _task(self, addr: str, port: int) -> None:

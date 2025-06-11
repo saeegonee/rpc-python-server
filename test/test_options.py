@@ -2,7 +2,7 @@ import sys
 import constants
 sys.path.append(constants.PROJECT_PATH)
 
-from options import Option
+from stuff.options import Option
 
 
 def test_options() -> None:

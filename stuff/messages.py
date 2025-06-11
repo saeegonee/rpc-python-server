@@ -29,3 +29,6 @@ class Message(object):
 
     def receive_msg(self, msg: str) -> str:
         return f"Receive: {msg}"
+
+    def method_error(self, method: str, err) -> str:
+        return f"<{method}> method. {err}"
