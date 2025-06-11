@@ -49,7 +49,7 @@ class Server(object):
             log.warning(lmsg.disconnect(idx, err))
 
     async def _task(self, addr: str, port: int) -> None:
-        log.info(lmsg.start_server(addr, port))
+        log.info(lmsg.start_server())
 
         async with websockets.serve(self._listen_socket, addr, port):
             await asyncio.Future()

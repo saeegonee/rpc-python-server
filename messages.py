@@ -1,7 +1,7 @@
 class Message(object):
 
-    def start_server(self, addr: str, port: int) -> str:
-        return f"<<< Server started {addr}:{port} >>>"
+    def start_server(self) -> str:
+        return "<<< Server started >>>"
 
     def stop_server(self) -> str:
         return "<<< Server stopped >>>"
