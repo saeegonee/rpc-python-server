@@ -2,11 +2,11 @@ import sys
 import asyncio
 import logging
 import websockets
+from packet import Packet
 from client import Client
 from workshop import Workshop
-from options import Option
-from messages import Message
-from packet import Packet
+from stuff.options import Option
+from stuff.messages import Message
 
 
 lmsg = Message()
