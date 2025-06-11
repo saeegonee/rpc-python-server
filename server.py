@@ -1,3 +1,4 @@
+import sys
 import asyncio
 import logging
 import websockets
@@ -5,21 +6,27 @@ from options import Option
 from messages import Message
 from packet import Packet
 from peer import Peer
+from peer_server import PeerServer
 
 
 msg = Message()
 log = logging.getLogger(__name__)
 logging.basicConfig(
-        level=logging.INFO,
-        datefmt="%Y-%m-%d %H:%M:%S",
-        format="[%(asctime)s.%(msecs)03d][%(levelname)s] %(message)s",
-        )
+    level=logging.INFO,
+    datefmt="%Y-%m-%d %H:%M:%S",
+    format="[%(asctime)s.%(msecs)03d][%(levelname)s] %(message)s",
+)
 
 
-peers = { 0: set() }
+clients = set()
+serv_peer = PeerServer(clients)
+peers = { 
+    0: set(),
+    1: serv_peer
+}
 
 
-async def proc(socket) -> None:
+async def echo(socket) -> None:
     """Server func."""
 
     idx = len(peers[0]) + 2
@@ -47,7 +54,7 @@ async def server_task(addr: str, port: int) -> None:
 
     log.info(msg.start_server(addr, port))
 
-    async with websockets.serve(proc, addr, port):
+    async with websockets.serve(echo, addr, port):
         await asyncio.Future()
 
 
@@ -63,4 +70,8 @@ async def main() -> None:
 
 
 if __name__ == "__main__":
+    
+    args = sys.argv[1:]
+    log.info(args)
+
     asyncio.run(main())
