@@ -19,6 +19,10 @@ class Room(object):
     def __del__(self) -> None:
         log.info(lmsg.destroy_room(self.__idx))
 
+    @property
+    def client_count(self) -> int:
+        return len(self.__clients.keys())
+
     async def visit(self, client: Client) -> None:
         if client in self.__clients.values():
             return

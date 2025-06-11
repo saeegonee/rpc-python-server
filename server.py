@@ -7,7 +7,7 @@ from room_handler import RoomHandlerCommon
 from room import Room
 from packet import Packet
 from client import Client
-from stuff.options import Option
+from stuff.options import ADDRESS, PORT, ROOM_TIMEOUT
 from stuff.messages import Message
 
 
@@ -22,8 +22,16 @@ logging.basicConfig(
 
 class Server(object):
     def __init__(self) -> None:
-        self.__client_counter: int = 2
+        self.__client_counter: int = 0
         self.__rooms: dict[str, Room] = {}
+
+    async def _listen_room(self) -> None:
+        while True:
+            await asyncio.sleep(ROOM_TIMEOUT)
+            for uuid, room in self.__rooms.items():
+                if room.client_count == 0: 
+                    del self.__rooms[uuid]
+                    log.info(lmsg.destroy_room(uuid))
 
     async def _listen_socket(self, wsocket: websockets.ServerConnection) -> None:
 
@@ -56,12 +64,11 @@ class Server(object):
             await asyncio.Future()
 
     async def start(self) -> None:
-        opt = Option()
-        addr = opt.address()
-        port = opt.port()
-
-        task0 = asyncio.create_task(self._task(addr, port))
+        task0 = asyncio.create_task(self._task(ADDRESS, PORT))
+        task1 = asyncio.create_task(self._listen_room())
+        
         await task0
+        await task1
 
     def stop(self) -> None:
         """Force stop the server."""
