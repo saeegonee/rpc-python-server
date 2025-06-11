@@ -1,7 +1,6 @@
-class Permission(object):
+def common_permissions() -> list[str]:
+    return ["msg"]
 
-    def common(self) -> list[str]:
-        return ["msg"]
 
-    def extend(self) -> list[str]:
-        return ["auth"]
+def extend_permissions() -> list[str]:
+    return ["auth"]

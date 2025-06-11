@@ -1,14 +1,17 @@
 import sys
 import asyncio
 import logging
+from client import Client
+from modifier import Workshop
 import websockets
 from options import Option
 from messages import Message
 from packet import Packet
-from peer_server import PeerServer
+
+# from peer_server import PeerServer
 
 
-msg = Message()
+lmsg = Message()
 log = logging.getLogger(__name__)
 logging.basicConfig(
     level=logging.INFO,
@@ -17,53 +20,48 @@ logging.basicConfig(
 )
 
 
-peers = {0: set()}
-serv_peer = PeerServer(peers)
-peers[1] = serv_peer
+class Server(object):
+    def __init__(self) -> None:
+        self.__client_counter: int = 2
+        self.__clients: dict = {1: Workshop()}
 
+    async def _listen_socket(self, wsocket: websockets.ServerConnection) -> None:
+        idx = self.__client_counter + 1
+        client = Client(idx, wsocket)
+        self.__clients[idx] = client
+        self.__client_counter += 1
+        log.info(lmsg.connect(idx))
 
-async def echo(socket) -> None:
-    """Server func."""
+        try:
+            async for msg in wsocket:
+                packet = Packet(msg)
+                packet.extend()
 
-    try:
-        async for ws in socket:
-            packet = Packet(ws)
-            packet.extend()
-
-            if hasattr(peers[packet.recepient], packet.action):
                 # TODO. call action by name
-                pass
+                # if hasattr(peers[packet.recepient], packet.action):
 
-            else:
-                # TODO. send pity request
-                pass
+                # TODO. send pity request to client
+                # else:
 
-            log.info(msg.receive_msg(str(packet)))
+                log.info(lmsg.receive_msg(str(packet)))
 
-    except websockets.ConnectionClosed as err:
-        # TODO. del websocket from peers
+        except websockets.ConnectionClosed as err:
+            del self.__clients[idx]
+            log.warning(lmsg.disconnect(idx, err))
 
-        log.warning(msg.disconnect(-1, err))
+    async def _task(self, addr: str, port: int) -> None:
+        log.info(lmsg.start_server(addr, port))
 
+        async with websockets.serve(self._listen_socket, addr, port):
+            await asyncio.Future()
 
-async def server_task(addr: str, port: int) -> None:
-    """Main server task."""
+    async def start(self) -> None:
+        opt = Option()
+        addr = opt.address()
+        port = opt.port()
 
-    log.info(msg.start_server(addr, port))
-
-    async with websockets.serve(echo, addr, port):
-        await asyncio.Future()
-
-
-async def main() -> None:
-    """Task handler."""
-
-    opt = Option()
-    addr = opt.address()
-    port = opt.port()
-
-    task0 = asyncio.create_task(server_task(addr, port))
-    await task0
+        task0 = asyncio.create_task(self._task(addr, port))
+        await task0
 
 
 if __name__ == "__main__":
@@ -72,4 +70,5 @@ if __name__ == "__main__":
     if "-v" in args:
         logging.basicConfig(level=logging.INFO)
 
-    asyncio.run(main())
+    serv = Server()
+    asyncio.run(serv.start())

@@ -1,18 +1,26 @@
-import asyncio
-import websockets
-from options import Option
+from packet import Packet
+from websockets import ServerConnection
+from permissions import *
 
 
-async def listen() -> None:
+class Client(object):
+    def __init__(self, idx: int, wsocket: ServerConnection) -> None:
+        self.__id: int = idx
+        self.__socket: ServerConnection = wsocket
+        self.__permission: list = common_permissions()
 
-    opt = Option()
-    url = f"ws://{opt.address()}:{opt.port()}"
-    
-    async with websockets.connect(url) as ws:
-        while True:
-            await ws.send(f'[0,"auth","token"]')
-            # await ws.recv()
-            await asyncio.sleep(0.4)
+    @property
+    def id(self) -> int:
+        return self.__id
 
+    @property
+    def permission(self) -> list:
+        return self.__permission
 
-asyncio.get_event_loop().run_until_complete(listen())
+    def send(self, pck: Packet) -> None:
+        """ Send message to client."""
+        msg = str(pck)
+        self.__socket.send(msg)
+
+    def disconnect(self) -> None:
+        """ Force disconnect from server. """
