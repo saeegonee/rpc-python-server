@@ -25,13 +25,16 @@ class Server(object):
         self.__client_counter: int = 0
         self.__rooms: dict[str, Room] = {}
 
+    async def _check_room_clients(self) -> None:
+        for uuid, room in self.__rooms.items():
+            if room.client_count == 0: 
+                del self.__rooms[uuid]
+                log.info(lmsg.destroy_room(uuid))
+
     async def _listen_room(self) -> None:
         while True:
             await asyncio.sleep(ROOM_TIMEOUT)
-            for uuid, room in self.__rooms.items():
-                if room.client_count == 0: 
-                    del self.__rooms[uuid]
-                    log.info(lmsg.destroy_room(uuid))
+            await self._check_room_clients()
 
     async def _listen_socket(self, wsocket: websockets.ServerConnection) -> None:
 
