@@ -60,14 +60,13 @@ class Server(object):
             await room.leave(client)
             log.warning(lmsg.disconnect(idx, err))
 
-    async def _task(self, addr: str, port: int) -> None:
+    async def _socket_run(self) -> None:
         log.info(lmsg.start_server())
-
-        async with websockets.serve(self._listen_socket, addr, port):
+        async with websockets.serve(self._listen_socket, ADDRESS, PORT):
             await asyncio.Future()
 
     async def start(self) -> None:
-        task0 = asyncio.create_task(self._task(ADDRESS, PORT))
+        task0 = asyncio.create_task(self._socket_run())
         task1 = asyncio.create_task(self._listen_room())
         
         await task0
